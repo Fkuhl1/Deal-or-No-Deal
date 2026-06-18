@@ -12,31 +12,30 @@ public class MainLoop {
 		for (int i = 1; i < 27; i++) {
 			ungeoffneteKoffer.add("Koffer" + i);
 		}
+		//Definition von runden und der jeweiligen Kofferziehung
+		int anzahlKofferZiehungen = 0;
+		switch (runden) {
+		case 1:
+			anzahlKofferZiehungen = 6;
+			break;
+		case 2:
+			anzahlKofferZiehungen = 5;
+			break;
+		case 3:
+			anzahlKofferZiehungen = 4;
+			break;
+		case 4:
+			anzahlKofferZiehungen = 3;
+			break;
+		case 5:
+			anzahlKofferZiehungen = 2;
+			break;
+		default:
+			anzahlKofferZiehungen = 1;
+			break;
+		}
 		
 		while (ungeoffneteKoffer.size() > 1) {
-			int anzahlKofferZiehungen = 0;
-			switch (runden) {
-			case 1:
-				anzahlKofferZiehungen = 6;
-				break;
-			case 2:
-				anzahlKofferZiehungen = 5;
-				break;
-			case 3:
-				anzahlKofferZiehungen = 4;
-				break;
-			case 4:
-				anzahlKofferZiehungen = 3;
-				break;
-			case 5:
-				anzahlKofferZiehungen = 2;
-				break;
-			default:
-				anzahlKofferZiehungen = 1;
-				break;
-			}
-			
-			
 			
 			System.out.println("Runde " + runden);
 			 for (int i = 0; i < anzahlKofferZiehungen; i++) {
