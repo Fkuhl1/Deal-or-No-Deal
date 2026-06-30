@@ -5,7 +5,10 @@ public class DealOrNoDeal {
 	static Scanner scan = new Scanner(System.in);
 	static ArrayList<String> ungeoffneteKoffer = new ArrayList<>();
 	static ArrayList<String> geoffneteKoffer = new ArrayList<>();
+	static ArrayList<Double> betraege = new ArrayList();
 	static int runden = 1;
+
+	private static String spielerKofferName = "";
 
 	public static void main(String[] args) throws IOException {
 		Menue menue = new Menue();
@@ -14,22 +17,46 @@ public class DealOrNoDeal {
 
 	}
 
-	public static void HauptSpiel() {
+	public static void HauptSpiel() throws IOException {
 
 		InitialisiereKoffer();
+		InitialisiereGeldbetraege();
+		System.out.print(betraege);
+
 		PrivaterKofferAuswahl();
+
 		KofferZiehungen();
 	}
 
 	private static void PrivaterKofferAuswahl() {
-		System.out.println("Ungeöffnete Koffer: " + ungeoffneteKoffer);
 
-		System.out.print("Wähle deinen Speziellen Koffer aus: ");
-		String spielerKoffer = scan.nextLine();
+		try {
+			System.out.println("Ungeöffnete Koffer: " + ungeoffneteKoffer);
+			System.out.print("Wähle deinen Speziellen Koffer aus: ");
+			spielerKofferName = scan.nextLine();
 
-		if (ungeoffneteKoffer.contains(spielerKoffer)) {
-			ungeoffneteKoffer.remove(spielerKoffer);
-			System.out.print("\u001B[42m" + "Dein Spezieller Koffer:" + spielerKoffer + "\u001B[0m ");
+			if (ungeoffneteKoffer.contains(spielerKofferName)) {
+				ungeoffneteKoffer.remove(spielerKofferName);
+				System.out.print("\u001B[42m" + "Dein Spezieller Koffer:" + spielerKofferName + "\u001B[0m ");
+			}
+
+		} catch (Exception e) {
+			System.err.println("Bitte die Koffern zwischen 1 und 26 auswählen");
+		}
+
+	}
+
+	private static void InitialisiereGeldbetraege() {
+
+		try (Scanner scan = new Scanner(new File("Geldbeträge.txt"))) {
+			while (scan.hasNextLine()) {
+				String zeile = scan.nextLine();
+				betraege.add(Double.parseDouble(zeile));
+			}
+			Collections.shuffle(betraege);
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -37,7 +64,9 @@ public class DealOrNoDeal {
 		// 26 Koffer initialisieren
 		for (int i = 1; i < 27; i++) {
 			ungeoffneteKoffer.add("Koffer" + i);
+
 		}
+
 	}
 
 	private static void KofferZiehungen() {
@@ -67,6 +96,7 @@ public class DealOrNoDeal {
 
 			System.out.println("\u001B[44m" + "\nRunde " + runden + "\u001B[0m ");
 			for (int i = 0; i < anzahlKofferZiehungen; i++) {
+				System.out.print(betraege);
 
 				System.out.println("\u001B[46m" + "Ungeöffnete Koffer: " + ungeoffneteKoffer + "\u001B[0m ");
 
@@ -74,7 +104,13 @@ public class DealOrNoDeal {
 				String eingabe = scan.nextLine();
 
 				if (ungeoffneteKoffer.contains(eingabe)) {
-					ungeoffneteKoffer.remove(eingabe);
+					int index = ungeoffneteKoffer.indexOf(eingabe);
+
+					double wert = betraege.get(index);
+					System.out.println("Im " + eingabe + " sind " + wert + " Euro.");
+
+					ungeoffneteKoffer.remove(index);
+					betraege.remove(index);
 					geoffneteKoffer.add(eingabe);
 				} else {
 					System.err.println("Dieser Koffer existiert nicht oder wurde bereits geöffnet.");

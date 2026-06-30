@@ -11,7 +11,7 @@ public class Menue {
 
 	}
 
-	void playerInput() throws IOException {
+	void playerInput() throws IOException{
 		Scanner scan = new Scanner(System.in);
 		playerName = scan.nextLine();
 		System.out.println("Hallo " + "\u001B[33m" + playerName + "\u001B[0m" + "!\n" + "\nWähle aus: \nRegeln&Spielstart(1)\nSpielstart(2)");
