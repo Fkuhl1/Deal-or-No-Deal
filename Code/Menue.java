@@ -1,5 +1,8 @@
+
+/**
+*@author Fazeleh Daneshmandi, Aleksey Leinweber, Felix Kuhlemann
+*/
 import java.util.*;
-import java.io.*;
 
 public class Menue {
 	public String begruessung = "";
@@ -11,11 +14,13 @@ public class Menue {
 
 	}
 
-	void playerInput() throws IOException {
+	/**
+	 * Liest die Eingabe die vom Spieler eingegeben wird über die Tastatur und leitet zum Hauptspiel hinüber.
+	 */
+	void playerInput() {
 		Scanner scan = new Scanner(System.in);
 		playerName = scan.nextLine();
-		System.out.println("Hallo "  + playerName + "!\n"
-				+ "\nWähle aus: \nRegeln&Spielstart(1)\nSpielstart(2)");
+		System.out.println("Hallo " + playerName + "!\n" + "\nWähle aus: \nRegeln&Spielstart(1)\nSpielstart(2)");
 
 		while (true) {
 			try {
@@ -41,10 +46,10 @@ public class Menue {
 			System.out.println("Danach öffnest du Runde für Runde weitere Koffer.");
 			System.out.println("Nach jeder Runde macht dir die Bank ein Angebot.");
 			System.out.println("Nimmst du es an (DEAL) oder spielst du weiter (NO DEAL)?");
-			DealOrNoDeal.HauptSpiel();
+			DealOrNoDeal.hauptSpiel();
 			break;
 		case 2:
-			DealOrNoDeal.HauptSpiel();
+			DealOrNoDeal.hauptSpiel();
 			break;
 		}
 		scan.close();

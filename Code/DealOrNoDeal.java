@@ -1,51 +1,75 @@
+/**
+ *@author Fazeleh Daneshmandi, Aleksey Leinweber, Felix Kuhlemann 
+ */
+
 import java.util.*;
 import java.io.*;
 
 public class DealOrNoDeal {
+	
+	//Variablen
 	static Scanner scan = new Scanner(System.in);
-	static ArrayList<String> ungeoffneteKoffer = new ArrayList<>();
-	static ArrayList<String> geoffneteKoffer = new ArrayList<>();
+	static ArrayList<Integer> ungeoffneteKoffer = new ArrayList<>();
+	static ArrayList<Integer> geoffneteKoffer = new ArrayList<>();
 	static ArrayList<Double> betraege = new ArrayList();
+	static ArrayList<Double> uebersicht = new ArrayList<>();
 	static int runden = 1;
 	static int kofferAnzahl = 11;
+	private static Integer spielerKoffer;
+	private static double spielerBetrag = 0; // Speichert den Geldbetrag im persönlichen Koffer des Spielers
 
-	private static String spielerKoffer = "";
-	// Speichert den Geldbetrag im persönlichen Koffer des Spielers
-	static double spielerBetrag = 0;
-
-	public static void main(String[] args) throws IOException {
+	/**
+	 * Initialisiert das Menü Objekt sowie die Spielereingabe und Menüauswahl wird verarbeitet.
+	 * @param args
+	 */
+	public static void main(String[] args) {
 		Menue menue = new Menue();
 		System.out.println(menue.begruessung);
 		menue.playerInput();
-
 	}
 
-	public static void HauptSpiel() {
-
-		InitialisiereKoffer();
-		InitialisiereGeldbetraege();
-		System.out.print(betraege);
-
-		PrivaterKofferAuswahl();
-
-		KofferZiehungen();
+	/**
+	 * Einstiegspunkt ins Spiel
+	 */
+	public static void hauptSpiel() {
+		initialisiereKoffer();
+		initialisiereGeldbetraege();
+		privaterKofferAuswahl();
+		kofferZiehungen();
 	}
 
-	private static void PrivaterKofferAuswahl() {
+	/**
+	 * Spielerkoffer wird auswählt vom Spieler. Betrag wird vermerkt.
+	 */
+	private static void privaterKofferAuswahl() {
 		System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
-		System.out.print("Wähle deinen Koffer aus: ");
-		spielerKoffer = scan.nextLine();
-		int index = ungeoffneteKoffer.indexOf(spielerKoffer);
-		// Betrag des persönlichen Koffers speichern (wird am Ende ggf. ausgegeben)
-		spielerBetrag = betraege.get(index);
-		// Betrag und Koffer aus den aktiven Listen entfernen
-		// (der persönliche Koffer nimmt nicht am normalen Spielablauf teil)
-		betraege.remove(index);
-		ungeoffneteKoffer.remove(index);
+		while (true) {
+			try {
 
+				System.out.print("Wähle deinen Koffer aus: ");
+				spielerKoffer = Integer.parseInt(scan.nextLine());
+				if (spielerKoffer < 1 || spielerKoffer > 10) {
+					System.err.println("Bitte eine Zahl zwischen 1 und 10 eingeben.");
+				} else {
+					int index = ungeoffneteKoffer.indexOf(spielerKoffer);
+					// Betrag des persönlichen Koffers speichern (wird am Ende ggf. ausgegeben)
+					spielerBetrag = betraege.get(index);
+					// Betrag und Koffer aus den aktiven Listen entfernen
+					// (der persönliche Koffer nimmt nicht am normalen Spielablauf teil)
+					betraege.remove(index);
+					ungeoffneteKoffer.remove(index);
+					break;
+				}
+
+			} catch (Exception e) {
+			}
+		}
 	}
 
-	private static void InitialisiereGeldbetraege() {
+	/**
+	 * Textdatei von Beträgen wird eingelesen und von String zu Double umgewandelt.
+	 */
+	private static void initialisiereGeldbetraege() {
 
 		try (Scanner scan = new Scanner(new File("Geldbeträge.txt"))) {
 			while (scan.hasNextLine()) {
@@ -58,17 +82,24 @@ public class DealOrNoDeal {
 		}
 	}
 
-	private static void InitialisiereKoffer() {
+	/**
+	 *Koffern werden erzeugt.
+	 */
+	private static void initialisiereKoffer() {
 
 		for (int i = 1; i < kofferAnzahl; i++) {
-			ungeoffneteKoffer.add("Koffer" + i);
+			ungeoffneteKoffer.add(i);
 
 		}
 
 	}
 
-	// Berechnet den Durchschnitt aller noch nicht geöffneten Beträge als
-	// Bankangebot
+	// 
+	/**
+	 * Berechnet den Durchschnitt aller noch nicht geöffneten Beträge als
+	 *Bankangebot
+	 * @return Durchschnitt aller nichtgeöffneten Beträge.
+	 */
 	private static double berechneBankangebot() {
 
 		double summe = 0;
@@ -90,7 +121,20 @@ public class DealOrNoDeal {
 
 	}
 
-	private static void KofferZiehungen() {
+	
+	private static void zeigeUebersichtDerBetraege() {
+		uebersicht = new ArrayList<>(betraege);
+
+		uebersicht.add(spielerBetrag);
+		Collections.sort(uebersicht);
+
+		for (double betrag : uebersicht) {
+			System.err.println("Noch im Spiel befindliche Beträge: " + betrag + " €");
+		}
+
+	}
+
+	private static void kofferZiehungen() {
 		while (ungeoffneteKoffer.size() > 1) {
 			// Definition von runden und der jeweiligen Kofferziehung
 			int anzahlKofferZiehungen = 0;
@@ -121,18 +165,23 @@ public class DealOrNoDeal {
 				if (ungeoffneteKoffer.size() <= 1)
 					break;
 
-				System.out.print(betraege);
-
 				System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
 
 				System.out.print("Welchen Koffer möchten Sie öffnen? ");
-				String eingabe = scan.nextLine();
+				int eingabe;
+				try {
+					eingabe = Integer.parseInt(scan.nextLine());
+				} catch (Exception e) {
+					System.err.println("Bitte eine Zahl eingeben.");
+					i--;
+					continue;
+				}
 
 				if (ungeoffneteKoffer.contains(eingabe)) {
 					int index = ungeoffneteKoffer.indexOf(eingabe);
 
 					double wert = betraege.get(index);
-					System.out.println("Im " + eingabe + " sind " + wert + " Euro.");
+					System.out.println("Im Koffer" + eingabe + " sind " + wert + " Euro.");
 
 					ungeoffneteKoffer.remove(index);
 					betraege.remove(index);
@@ -151,11 +200,9 @@ public class DealOrNoDeal {
 			// %=Platzhalter .2=2 Nachkommastellen f=float/double
 			System.out.println("Die Bank bietet dir: " + String.format("%.2f", angebot) + " €");
 			System.out.println("Deal or No Deal?");
-
-	
-
+			zeigeUebersichtDerBetraege();
 			if (scan.nextLine().trim().toLowerCase().equals("deal")) {
-				
+
 				System.out.println("\n Du hast einen Deal gemacht!");
 				System.out.println("Du erhältst: " + String.format("%.2f", angebot) + " €");
 				System.out.println("Herzlichen Glückwunsch und danke fürs Spielen!");
@@ -171,15 +218,17 @@ public class DealOrNoDeal {
 		}
 		// Nur noch der persönliche Koffer übrig -> Spiel endet automatisch
 		System.out.println("\nNur noch 1 Koffer übrig! ");
-		System.out.println(
-				"Dein Koffer enthält: " + String.format("%.2f", spielerBetrag) + " €" + " übrig" + betraege.get(0));
+		System.out.println("Dein Koffer enthält: " + String.format("%.2f", spielerBetrag) + " €" + " übrig "
+				+ String.format("%.2f", betraege.get(0)) + " €");
 		System.out.println("\nMöchtest du tauschen? (Ja/Nein) ");
 
 		if (scan.nextLine().trim().toLowerCase().equals("ja")) {
-			System.out.println("Das ist dein Gewinn: " + betraege.get(0) +  "Herzlichen Glückwunsch!");
+			System.out.println("Das ist dein Gewinn: " + String.format("%.2f", betraege.get(0)) + " €"
+					+ " \nHerzlichen Glückwunsch!");
 
-		}else {
-			System.out.println("Das ist dein Gewinn: " + spielerBetrag +  "Herzlichen Glückwunsch!");
+		} else {
+			System.out.println("Das ist dein Gewinn: " + String.format("%.2f", spielerBetrag) + " €"
+					+ " \nHerzlichen Glückwunsch!");
 
 		}
 
