@@ -184,7 +184,7 @@ public class DealOrNoDeal {
 
 				System.out.print("Wähle deinen Koffer aus: ");
 
-				spielerKoffer = scan.nextInt();
+				spielerKoffer = Integer.parseInt(scan.nextLine());
 				int index = ungeoffneteKoffer.indexOf(spielerKoffer);
 				spielerBetrag = betraege.get(index);
 				betraege.remove(index);
