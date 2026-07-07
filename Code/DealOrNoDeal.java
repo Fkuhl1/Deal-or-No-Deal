@@ -9,6 +9,7 @@ import java.io.*;
 public class DealOrNoDeal {
 
 	// Variablen
+	// Shakiba ANFANG
 	static Scanner scan = new Scanner(System.in);
 	static ArrayList<Integer> ungeoffneteKoffer = new ArrayList<>();
 	static ArrayList<Integer> geoffneteKoffer = new ArrayList<>();
@@ -30,10 +31,13 @@ public class DealOrNoDeal {
 		System.out.println(menue.begruessung);
 		menue.playerInput();
 	}
+	// Shakiba ENDE
 
 	/**
 	 * Einstiegspunkt ins Spiel
 	 */
+
+	// Aleksey ANFANG
 	public static void hauptSpiel() {
 		initialisiereKoffer();
 		readDateiUndInitialisiereBetraege();
@@ -42,32 +46,15 @@ public class DealOrNoDeal {
 	}
 
 	/**
-	 * Spielerkoffer wird auswählt vom Spieler. Betrag wird vermerkt für Spielende.
+	 * Koffern werden erzeugt.
 	 */
-	private static void privaterKofferAuswahl() {
+	private static void initialisiereKoffer() {
 
+		for (int i = 1; i < kofferAnzahl; i++) {
+			ungeoffneteKoffer.add(i);
 
-		while (spielerKoffer >= 1 || spielerKoffer <= 10) {
-
-			try {
-				System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
-
-				
-				System.out.print("Wähle deinen Koffer aus: ");
-
-				spielerKoffer = scan.nextInt();
-				int index = ungeoffneteKoffer.indexOf(spielerKoffer);
-				spielerBetrag = betraege.get(index);
-				betraege.remove(index);
-				ungeoffneteKoffer.remove(index);
-
-				break;
-
-			} catch (Exception e) {
-				System.err.println("Bitte eine Zahl eingeben.");
-
-			}
 		}
+
 	}
 
 	/**
@@ -88,18 +75,130 @@ public class DealOrNoDeal {
 	}
 
 	/**
-	 * Koffern werden erzeugt.
+	 * Definition von Runden und der jeweiligen Kofferziehung
 	 */
-	private static void initialisiereKoffer() {
+	
+	private static void kofferZiehungen() {
+		while (ungeoffneteKoffer.size() > 1) {
+			int anzahlKofferZiehungen = 0;
+			switch (runden) {
+			case 1:
+				anzahlKofferZiehungen = 3;
+				break;
+			case 2:
+				anzahlKofferZiehungen = 2;
+				break;
+			case 3:
+				anzahlKofferZiehungen = 2;
+				break;
+			default:
+				anzahlKofferZiehungen = 1;
+				break;
+			}
 
-		for (int i = 1; i < kofferAnzahl; i++) {
-			ungeoffneteKoffer.add(i);
+			System.out.println("Runde " + runden);
+			for (int i = 0; i < anzahlKofferZiehungen; i++) {
+				
+				if (ungeoffneteKoffer.size() <= 1)
+					break;
+
+				System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
+				System.out.print("Welchen Koffer möchten Sie öffnen? ");
+				
+				int eingabe;
+				try {
+					eingabe = Integer.parseInt(scan.nextLine());
+				} catch (Exception e) {
+					i--;
+					continue;
+				}
+
+				if (ungeoffneteKoffer.contains(eingabe)) {
+					int index = ungeoffneteKoffer.indexOf(eingabe);
+
+					double wert = betraege.get(index);
+					System.out.println("Im Koffer" + eingabe + " sind " + wert + " Euro.");
+
+					ungeoffneteKoffer.remove(index);
+					betraege.remove(index);
+					geoffneteKoffer.add(eingabe);
+				} else {
+					System.err.println("Dieser Koffer existiert nicht oder wurde bereits geöffnet.");
+					i--;
+				}
+
+				System.out.println("Geöffnete Koffer: " + geoffneteKoffer);
+			}
+			//Aleksey ENDE
+			//Felix ANFANG
+			// Bankangebot nach jeder abgeschlossenen Runde berechnen und anzeigen
+			double angebot = berechneBankangebot();
+
+			// %=Platzhalter .2=2 Nachkommastellen f=float/double
+			System.out.println("Die Bank bietet dir: " + String.format("%.2f", angebot) + " €");
+			System.out.println("Deal or No Deal?");
+			zeigeUebersichtDerBetraege();
+			if (scan.nextLine().trim().toLowerCase().equals("deal")) {
+
+				System.out.println("\n Du hast einen Deal gemacht!");
+				System.out.println("Du erhältst: " + String.format("%.2f", angebot) + " €");
+				System.out.println("Herzlichen Glückwunsch und danke fürs Spielen!");
+				// Methode verlassen -> Spiel endet
+				return;
+			} else {
+				System.out.println("NO DEAL! Das Spiel geht weiter...\n");
+			}
+			// Rundenzähler erhöhen für die nächste Iteration
+			runden++;
+		}
+		// Nur noch der persönliche Koffer übrig -> Spiel endet automatisch
+		System.out.println("\nNur noch 1 Koffer übrig! ");
+		System.out.println("Dein Koffer enthält: " + String.format("%.2f", spielerBetrag) + " €" + " übrig "
+				+ String.format("%.2f", betraege.get(0)) + " €");
+		System.out.println("\nMöchtest du tauschen? (Ja/Nein) ");
+
+		if (scan.nextLine().trim().toLowerCase().equals("ja")) {
+			System.out.println("Das ist dein Gewinn: " + String.format("%.2f", betraege.get(0)) + " €"
+					+ " \nHerzlichen Glückwunsch!");
+
+		} else {
+			System.out.println("Das ist dein Gewinn: " + String.format("%.2f", spielerBetrag) + " €"
+					+ " \nHerzlichen Glückwunsch!");
 
 		}
 
+		// Auswahlmöglichkeit
+
+	}
+	
+
+	/**
+	 * Spielerkoffer wird auswählt vom Spieler. Betrag wird vermerkt für Spielende.
+	 */
+	private static void privaterKofferAuswahl() {
+
+		while (spielerKoffer >= 1 || spielerKoffer <= 10) {
+
+			try {
+				System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
+
+				System.out.print("Wähle deinen Koffer aus: ");
+
+				spielerKoffer = scan.nextInt();
+				int index = ungeoffneteKoffer.indexOf(spielerKoffer);
+				spielerBetrag = betraege.get(index);
+				betraege.remove(index);
+				ungeoffneteKoffer.remove(index);
+
+				break;
+
+			} catch (Exception e) {
+				System.err.println("Bitte eine Zahl eingeben.");
+
+			}
+		}
 	}
 
-	//
 	/**
 	 * Berechnet den Durchschnitt aller noch nicht geöffneten Beträge als
 	 * Bankangebot
@@ -131,107 +230,5 @@ public class DealOrNoDeal {
 		}
 
 	}
-
-	private static void kofferZiehungen() {
-		while (ungeoffneteKoffer.size() > 1) {
-			// Definition von runden und der jeweiligen Kofferziehung
-			int anzahlKofferZiehungen = 0;
-			switch (runden) {
-			case 1:
-				anzahlKofferZiehungen = 3;
-				break;
-			case 2:
-				anzahlKofferZiehungen = 2;
-				break;
-			case 3:
-				anzahlKofferZiehungen = 2;
-				break;
-//			case 4:
-//				anzahlKofferZiehungen = 3;
-//				break;
-//			case 5:
-//				anzahlKofferZiehungen = 2;
-//				break;
-			default:
-				anzahlKofferZiehungen = 1;
-				break;
-			}
-
-			System.out.println("Runde " + runden);
-			for (int i = 0; i < anzahlKofferZiehungen; i++) {
-				// Abbruch falls nur noch 1 Koffer übrig
-				if (ungeoffneteKoffer.size() <= 1)
-					break;
-
-				System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
-
-				System.out.print("Welchen Koffer möchten Sie öffnen? ");
-				int eingabe;
-				try {
-					eingabe = Integer.parseInt(scan.nextLine());
-				} catch (Exception e) {
-					// System.err.println("Bitte eine Zahl eingeben.");
-					i--;
-					continue;
-				}
-
-				if (ungeoffneteKoffer.contains(eingabe)) {
-					int index = ungeoffneteKoffer.indexOf(eingabe);
-
-					double wert = betraege.get(index);
-					System.out.println("Im Koffer" + eingabe + " sind " + wert + " Euro.");
-
-					ungeoffneteKoffer.remove(index);
-					betraege.remove(index);
-					geoffneteKoffer.add(eingabe);
-				} else {
-					System.err.println("Dieser Koffer existiert nicht oder wurde bereits geöffnet.");
-					i--;
-				}
-
-				System.out.println("Geöffnete Koffer: " + geoffneteKoffer);
-			}
-
-			// Bankangebot nach jeder abgeschlossenen Runde berechnen und anzeigen
-			double angebot = berechneBankangebot();
-
-			// %=Platzhalter .2=2 Nachkommastellen f=float/double
-			System.out.println("Die Bank bietet dir: " + String.format("%.2f", angebot) + " €");
-			System.out.println("Deal or No Deal?");
-			zeigeUebersichtDerBetraege();
-			if (scan.nextLine().trim().toLowerCase().equals("deal")) {
-
-				System.out.println("\n Du hast einen Deal gemacht!");
-				System.out.println("Du erhältst: " + String.format("%.2f", angebot) + " €");
-				System.out.println("Herzlichen Glückwunsch und danke fürs Spielen!");
-				// Methode verlassen -> Spiel endet
-				return;
-			} else {
-				System.out.println("NO DEAL! Das Spiel geht weiter...\n");
-			}
-			// Rundenzähler erhöhen für die nächste Iteration
-
-			runden++;
-
-		}
-		// Nur noch der persönliche Koffer übrig -> Spiel endet automatisch
-		System.out.println("\nNur noch 1 Koffer übrig! ");
-		System.out.println("Dein Koffer enthält: " + String.format("%.2f", spielerBetrag) + " €" + " übrig "
-				+ String.format("%.2f", betraege.get(0)) + " €");
-		System.out.println("\nMöchtest du tauschen? (Ja/Nein) ");
-
-		if (scan.nextLine().trim().toLowerCase().equals("ja")) {
-			System.out.println("Das ist dein Gewinn: " + String.format("%.2f", betraege.get(0)) + " €"
-					+ " \nHerzlichen Glückwunsch!");
-
-		} else {
-			System.out.println("Das ist dein Gewinn: " + String.format("%.2f", spielerBetrag) + " €"
-					+ " \nHerzlichen Glückwunsch!");
-
-		}
-
-		// Auswahlmöglichkeit
-
-	}
-
+	//Felix ENDE
 }
