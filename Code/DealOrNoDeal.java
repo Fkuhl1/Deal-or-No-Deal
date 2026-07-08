@@ -13,10 +13,10 @@ public class DealOrNoDeal {
 	static Scanner scan = new Scanner(System.in);
 	static ArrayList<Integer> ungeoffneteKoffer = new ArrayList<>();
 	static ArrayList<Integer> geoffneteKoffer = new ArrayList<>();
-	static ArrayList<Double> betraege = new ArrayList();
+	static ArrayList<Double> betraege = new ArrayList<>();
 	static ArrayList<Double> uebersicht = new ArrayList<>();
 	static int runden = 1;
-	static int kofferAnzahl = 11;
+	static int kofferAnzahl = 10;
 	private static int spielerKoffer;
 	private static double spielerBetrag = 0; // Speichert den Geldbetrag im persönlichen Koffer des Spielers
 
@@ -54,7 +54,6 @@ public class DealOrNoDeal {
 			ungeoffneteKoffer.add(i);
 
 		}
-
 	}
 
 	/**
@@ -109,32 +108,33 @@ public class DealOrNoDeal {
 				try {
 					eingabe = Integer.parseInt(scan.nextLine());
 				} catch (Exception e) {
+					System.err.println("Bitte geben Sie eine gültige Zahl ein!");
 					i--;
 					continue;
 				}
 
-				if (ungeoffneteKoffer.contains(eingabe)) {
+				if (!ungeoffneteKoffer.contains(eingabe)) {
+					System.err.println("Dieser Koffer existiert nicht oder wurde bereits geöffnet.");
+				    i--;
+				    continue;
+				}
+
 					int index = ungeoffneteKoffer.indexOf(eingabe);
 
 					double wert = betraege.get(index);
-					System.out.println("Im Koffer" + eingabe + " sind " + wert + " Euro.");
+					System.out.println("Im Koffer " + eingabe + " sind " + String.format("%.2f",wert) + " €");
 
 					ungeoffneteKoffer.remove(index);
 					betraege.remove(index);
 					geoffneteKoffer.add(eingabe);
-				} else {
-					System.err.println("Dieser Koffer existiert nicht oder wurde bereits geöffnet.");
-					i--;
-				}
 
-				System.out.println("Geöffnete Koffer: " + geoffneteKoffer);
+				System.out.println("Bereits geöffnete Koffer: " + geoffneteKoffer);
 			}
 			//Aleksey ENDE
 			//Felix ANFANG
 			// Bankangebot nach jeder abgeschlossenen Runde berechnen und anzeigen
 			double angebot = berechneBankangebot();
 
-			// %=Platzhalter .2=2 Nachkommastellen f=float/double
 			System.out.println("Die Bank bietet dir: " + String.format("%.2f", angebot) + " €");
 			System.out.println("Deal or No Deal?");
 			zeigeUebersichtDerBetraege();
@@ -153,9 +153,11 @@ public class DealOrNoDeal {
 		}
 		// Nur noch der persönliche Koffer übrig -> Spiel endet automatisch
 		System.out.println("\nNur noch 1 Koffer übrig! ");
-		System.out.println("Dein Koffer enthält: " + String.format("%.2f", spielerBetrag) + " €" + " übrig "
-				+ String.format("%.2f", betraege.get(0)) + " €");
-		System.out.println("\nMöchtest du tauschen? (Ja/Nein) ");
+		System.out.println("Diese beiden Beträge sind noch im Spiel:");
+		System.out.println(" - " + String.format("%.2f", spielerBetrag) + " €");
+		System.out.println(" - " + String.format("%.2f", betraege.get(0)) + " €");
+		System.out.println("\nEiner davon ist in DEINEM Koffer.");
+		System.out.println("\nMöchtest du deinen Koffer tauschen? (Ja/Nein) ");
 
 		if (scan.nextLine().trim().toLowerCase().equals("ja")) {
 			System.out.println("Das ist dein Gewinn: " + String.format("%.2f", betraege.get(0)) + " €"
@@ -164,20 +166,15 @@ public class DealOrNoDeal {
 		} else {
 			System.out.println("Das ist dein Gewinn: " + String.format("%.2f", spielerBetrag) + " €"
 					+ " \nHerzlichen Glückwunsch!");
-
 		}
-
-		// Auswahlmöglichkeit
-
 	}
 	
-
 	/**
 	 * Spielerkoffer wird auswählt vom Spieler. Betrag wird vermerkt für Spielende.
 	 */
 	private static void privaterKofferAuswahl() {
 
-		while (spielerKoffer >= 1 || spielerKoffer <= 10) {
+		while (!(spielerKoffer >= 1 && spielerKoffer <= 10)) {
 
 			try {
 				System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
@@ -193,7 +190,7 @@ public class DealOrNoDeal {
 				break;
 
 			} catch (Exception e) {
-				System.err.println("Bitte eine Zahl eingeben.");
+				System.err.println("Bitte eine Zahl von 1-10 eingeben.");
 
 			}
 		}
@@ -226,9 +223,8 @@ public class DealOrNoDeal {
 		Collections.sort(uebersicht);
 
 		for (double betrag : uebersicht) {
-			System.err.println("Noch im Spiel befindliche Beträge: " + betrag + " €");
+			System.out.println("Noch im Spiel befindliche Beträge: " + String.format("%.2f",betrag) + " €");
 		}
-
 	}
 	//Felix ENDE
 }
