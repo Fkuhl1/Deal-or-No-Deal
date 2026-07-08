@@ -13,7 +13,7 @@ public class DealOrNoDeal {
 	static Scanner scan = new Scanner(System.in);
 	static ArrayList<Integer> ungeoffneteKoffer = new ArrayList<>();
 	static ArrayList<Integer> geoffneteKoffer = new ArrayList<>();
-	static ArrayList<Double> betraege = new ArrayList();
+	static ArrayList<Double> betraege = new ArrayList<>();
 	static ArrayList<Double> uebersicht = new ArrayList<>();
 	static int runden = 1;
 	static int kofferAnzahl = 11;
@@ -135,7 +135,6 @@ public class DealOrNoDeal {
 			// Bankangebot nach jeder abgeschlossenen Runde berechnen und anzeigen
 			double angebot = berechneBankangebot();
 
-			// %=Platzhalter .2=2 Nachkommastellen f=float/double
 			System.out.println("Die Bank bietet dir: " + String.format("%.2f", angebot) + " €");
 			System.out.println("Deal or No Deal?");
 			zeigeUebersichtDerBetraege();
@@ -191,7 +190,7 @@ public class DealOrNoDeal {
 				break;
 
 			} catch (Exception e) {
-				System.err.println("Bitte eine Zahl eingeben.");
+				System.err.println("Bitte eine Zahl von 1-10 eingeben.");
 
 			}
 		}
