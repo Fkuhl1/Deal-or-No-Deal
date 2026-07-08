@@ -38,11 +38,12 @@ public class DealOrNoDeal {
 	 */
 
 	// Aleksey ANFANG
-	public static void hauptSpiel() {
+	public static void hauptSpiel(){
 		initialisiereKoffer();
 		readDateiUndInitialisiereBetraege();
-		privaterKofferAuswahl();
 		kofferZiehungen();
+		privaterKofferAuswahl();
+
 	}
 
 	/**
@@ -50,7 +51,7 @@ public class DealOrNoDeal {
 	 */
 	private static void initialisiereKoffer() {
 
-		for (int i = 1; i < kofferAnzahl; i++) {
+		for (int i = 1; i <= kofferAnzahl; i++) {
 			ungeoffneteKoffer.add(i);
 
 		}
@@ -76,7 +77,7 @@ public class DealOrNoDeal {
 	/**
 	 * Definition von Runden und der jeweiligen Kofferziehung
 	 */
-	
+
 	private static void kofferZiehungen() {
 		while (ungeoffneteKoffer.size() > 1) {
 			int anzahlKofferZiehungen = 0;
@@ -97,13 +98,13 @@ public class DealOrNoDeal {
 
 			System.out.println("Runde " + runden);
 			for (int i = 0; i < anzahlKofferZiehungen; i++) {
-				
+
 				if (ungeoffneteKoffer.size() <= 1)
 					break;
 
 				System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
 				System.out.print("Welchen Koffer möchten Sie öffnen? ");
-				
+
 				int eingabe;
 				try {
 					eingabe = Integer.parseInt(scan.nextLine());
@@ -115,23 +116,23 @@ public class DealOrNoDeal {
 
 				if (!ungeoffneteKoffer.contains(eingabe)) {
 					System.err.println("Dieser Koffer existiert nicht oder wurde bereits geöffnet.");
-				    i--;
-				    continue;
+					i--;
+					continue;
 				}
 
-					int index = ungeoffneteKoffer.indexOf(eingabe);
+				int index = ungeoffneteKoffer.indexOf(eingabe);
 
-					double wert = betraege.get(index);
-					System.out.println("Im Koffer " + eingabe + " sind " + String.format("%.2f",wert) + " €");
+				double wert = betraege.get(index);
+				System.out.println("Im Koffer " + eingabe + " sind " + String.format("%.2f", wert) + " €");
 
-					ungeoffneteKoffer.remove(index);
-					betraege.remove(index);
-					geoffneteKoffer.add(eingabe);
+				ungeoffneteKoffer.remove(index);
+				betraege.remove(index);
+				geoffneteKoffer.add(eingabe);
 
 				System.out.println("Bereits geöffnete Koffer: " + geoffneteKoffer);
 			}
-			//Aleksey ENDE
-			//Felix ANFANG
+			// Aleksey ENDE
+			// Felix ANFANG
 			// Bankangebot nach jeder abgeschlossenen Runde berechnen und anzeigen
 			double angebot = berechneBankangebot();
 
@@ -168,14 +169,12 @@ public class DealOrNoDeal {
 					+ " \nHerzlichen Glückwunsch!");
 		}
 	}
-	
+
 	/**
 	 * Spielerkoffer wird auswählt vom Spieler. Betrag wird vermerkt für Spielende.
 	 */
 	private static void privaterKofferAuswahl() {
-
 		while (!(spielerKoffer >= 1 && spielerKoffer <= 10)) {
-
 			try {
 				System.out.println("\nUngeöffnete Koffer: " + ungeoffneteKoffer);
 
@@ -223,8 +222,8 @@ public class DealOrNoDeal {
 		Collections.sort(uebersicht);
 
 		for (double betrag : uebersicht) {
-			System.out.println("Noch im Spiel befindliche Beträge: " + String.format("%.2f",betrag) + " €");
+			System.out.println("Noch im Spiel befindliche Beträge: " + String.format("%.2f", betrag) + " €");
 		}
 	}
-	//Felix ENDE
+	// Felix ENDE
 }

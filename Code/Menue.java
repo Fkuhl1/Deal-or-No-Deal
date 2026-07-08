@@ -7,14 +7,9 @@ import java.util.*;
 
 //Shakiba ANFANG
 public class Menue {
-	public String begruessung = "";
+	public String begruessung = "Herzlich Willkommen, bei Deal or No Deal!" + "\nBitte gebe deinen Namen ein: ";
 	private String playerName = "";
-	public int eingabe;
-
-	Menue() {
-		begruessung = "Herzlich Willkommen, bei Deal or No Deal!\nBitte gebe deinen Namen ein: ";
-
-	}
+	private int eingabe;
 
 	/**
 	 * Liest die Eingabe die vom Spieler eingegeben wird über die Tastatur und leitet zum Hauptspiel hinüber.
